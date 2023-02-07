@@ -1,0 +1,24 @@
+{
+  "name": "newscraper",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "gen": "node generalScrape.js",
+    "site": "node generalScrapeWithSite.js",
+    "lazy": "node lazy.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "archiver": "^5.3.1",
+    "aws-sdk": "^2.678.0",
+    "fs": "^0.0.1-security",
+    "mariadb": "^2.5.2",
+    "path": "^0.12.7",
+    "puppeteer": "^17.1.3"
+  }
+}

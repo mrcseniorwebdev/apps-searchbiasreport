@@ -1,0 +1,55 @@
+$main-black: #0f1010;
+$main-grey: #191b1b;
+// $main-grey-light: #494A4A;
+$intranet_blue: #2b7cff;
+$intranet_green: #65b53d;
+$intranet_red: #ff603d;
+$font_famiry: "Montserrat", sans-serif;
+
+$nav_width: 300px;
+
+* {
+    box-sizing: border-box;
+}
+:root {
+    --white: #F8F4FF;
+    --black: #030520;
+}
+body {
+    margin: 0;
+    padding: 0;
+    background: var(--white);
+    font-family: $font_famiry;
+    overflow-x: hidden;
+    color: var(--black);
+}
+
+.app-wrapper {
+    .app {
+        display: grid;
+        width: 100vw;
+        min-height: 100vh;
+        grid-template-columns: $nav_width auto;
+        grid-template-rows: auto;
+    }
+}
+
+.hoverAnim {
+    $time: .4s;
+    transition: all $time;
+    svg {
+        transition: all $time;
+    }
+    &:hover {
+        $dist: 0.1em;
+        transform: translate($dist, -$dist);
+        svg {
+            transform: scale(1.1);
+        }
+    }
+}
+
+.img-fluid {
+    max-width: 100%;
+    height: auto;
+}
