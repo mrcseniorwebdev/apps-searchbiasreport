@@ -34,6 +34,7 @@ const searchEnginesNews = {
 const searchEnginesGeneral = {
     google: 'https://www.google.com/search?q=[[SEARCH_QUERY]]',
     bing: 'https://www.bing.com/search?q=[[SEARCH_QUERY]]',
+    tusk: 'https://tusksearch.com/search?q=[[SEARCH_QUERY]]&p=1&l=center',
     // brave: 'https://search.brave.com/search?q=[[SEARCH_QUERY]]',
     duck: 'https://duckduckgo.com/?q=[[SEARCH_QUERY]]'
 }
@@ -166,6 +167,20 @@ const extractLinks = async (engine, page) => {
         })
         return braveCards.filter(elem => elem != null)
     }
+    if (engine == 'tusk') {
+        await page.waitForSelector('.result-card')
+        await autoScroll(page);
+        await autoScroll(page);
+
+        const tuskCards = await page.$$eval('.result-card a.title', cards => {
+            return cards.map(card => {
+                const text = card.innerText
+                const link = card.href
+                return { link, text }
+            })
+        })
+        return tuskCards.filter(elem => elem != null)
+    }
 
     if (engine == 'duck') {
         await autoScroll(page);
@@ -177,6 +192,7 @@ const extractLinks = async (engine, page) => {
                 return { link, text }
             })
         })
+
         return duckCards.filter(elem => elem != null)
     }
 
@@ -222,6 +238,10 @@ const extractLinks = async (engine, page) => {
     }
 
     const s3Key = `sbr/${normalizeString(jobData.cname)}/${normalizeString(jobData.query)}/`
+    // const term = {
+    //     query: 'Donald Trump',
+    //     site: ''
+    // }
     const term = {
         query: jobData.query,
         site: jobData.siteurl
@@ -294,16 +314,18 @@ const extractLinks = async (engine, page) => {
         'google': null,
         'bing': null,
         'duck': null,
+        'tusk': null,
     }
 
     csvString += `Search Query: ${term.query}\n`
     csvString += `Campaign Websitre: ${term.site}\n\n`
-    csvString += `Position,Google,Bing,Duck Duck Go\n`
+    csvString += `Position,Google,Bing,Duck Duck Go,Tusk\n`
 
     for (let i = 0; i < allData.maxLength; ++i) {
         const googleData = allData['google'][i] ? `"=HYPERLINK(""${allData['google'][i].link}"",""${stripQuotes(allData['google'][i].text)}"")"` : " "
         const bingData = allData['bing'][i] ? `"=HYPERLINK(""${allData['bing'][i].link}"",""${stripQuotes(allData['bing'][i].text)}"")"` : " "
         const duckData = allData['duck'][i] ? `"=HYPERLINK(""${allData['duck'][i].link}"",""${stripQuotes(allData['duck'][i].text)}"")"` : " "
+        const tuskData = allData['tusk'][i] ? `"=HYPERLINK(""${allData['tusk'][i].link}"",""${stripQuotes(allData['tusk'][i].text)}"")"` : " "
 
         if (allData['google'][i]?.link.includes(term.site) && campaignWebsiteSite['google'] == null) {
             campaignWebsiteSite['google'] = i + 1
@@ -314,14 +336,17 @@ const extractLinks = async (engine, page) => {
         if (allData['duck'][i]?.link.includes(term.site) && campaignWebsiteSite['duck'] == null) {
             campaignWebsiteSite['duck'] = i + 1
         }
+        if (allData['tusk'][i]?.link.includes(term.site) && campaignWebsiteSite['tusk'] == null) {
+            campaignWebsiteSite['tusk'] = i + 1
+        }
 
-        csvString += `${i + 1},${googleData},${bingData},${duckData}\n`
+        csvString += `${i + 1},${googleData},${bingData},${duckData},${tuskData}\n`
     }
 
 
 
 
-    csvString += `Campaign Website: ${term.site},Website Position: ${campaignWebsiteSite['google']},Website Position: ${campaignWebsiteSite['bing']},Website Position: ${campaignWebsiteSite['duck']}\n`
+    csvString += `Campaign Website: ${term.site},Website Position: ${campaignWebsiteSite['google']},Website Position: ${campaignWebsiteSite['bing']},Website Position: ${campaignWebsiteSite['duck']},Website Position: ${campaignWebsiteSite['tusk']}\n`
 
 
 

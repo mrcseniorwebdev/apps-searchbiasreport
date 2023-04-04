@@ -64,7 +64,7 @@ const Nav = ({setShowModal}) => {
                             : ""
                     }>
                         <Link to="/searchbiasreport/dashboard/main" >
-                            Dashbaord
+                            Dashboard
                         </Link>
                     </li>
                     <li className={
