@@ -123,12 +123,13 @@ const extractLinks = async (engine, page) => {
     if (engine == 'google') {
         await autoScroll(page);
         await autoScroll(page);
-        const gCards = await page.$$eval('div[data-header-feature] a', cards => {
+        const gCards = await page.$$eval('div[data-snc]', cards => {
             return cards.map(card => {
                 const heading = card.querySelector('div[role="heading"]')
+                let link = card.querySelector('a').href
                 if (heading) {
                     let text = heading.textContent
-                    return { link: card.href, text }
+                    return { link, text }
                 }
             })
         })
