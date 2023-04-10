@@ -238,14 +238,14 @@ const extractLinks = async (engine, page) => {
     }
 
     // const s3Key = `sbr/${normalizeString(jobData.cname)}/${normalizeString(jobData.query)}/`
+//    const term = {
+  //      query: 'is isreal a good country?',
+    //    site: ''
+    //}
     const term = {
-        query: 'is isreal a good country?',
-        site: ''
+         query: jobData.query,
+         site: jobData.siteurl
     }
-    // const term = {
-    //     query: jobData.query,
-    //     site: jobData.siteurl
-    // }
 
     const browser = await puppeteer.launch({
         headless: true,
