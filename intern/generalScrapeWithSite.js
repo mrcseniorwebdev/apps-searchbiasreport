@@ -185,7 +185,7 @@ const extractLinks = async (engine, page) => {
     if (engine == 'duck') {
         await autoScroll(page);
         await autoScroll(page);
-        const duckCards = await page.$$eval('.nrn-react-div h2 a', cards => {
+        const duckCards = await page.$$eval('.react-results--main h2 a', cards => {
             return cards.map(card => {
                 const link = card.href
                 const text = card.innerText

@@ -55,7 +55,7 @@ services:
       - db
 
   db:
-    image: mariadb
+    image: mariadb:10.8.2
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: password
