@@ -198,6 +198,93 @@ const extractLinks = async (engine, page) => {
 
     return
 }
+const extractNewsLinks = async (engine, page) => {
+    if (engine == "google") {
+        await autoScroll(page);
+        await autoScroll(page);
+        const gCards = await page.$$eval("a[jsname]", (cards) => {
+            return cards.map((card) => {
+                const heading = card.querySelector('div[role="heading"]');
+                let link = card?.href;
+                if (heading && link) {
+                    let text = heading.textContent;
+                    return { link, text };
+                }
+            });
+        });
+        return gCards.filter((elem) => elem != null);
+    }
+    if (engine == "bing") {
+        await autoScroll(page);
+        await autoScroll(page);
+        await autoScroll(page);
+
+        const Cards = await page.$$eval(".newscard", (cards) => {
+            return cards.map((card) => {
+                // console.log(card)
+                let link = card.getAttribute("data-url");
+                let text = card.getAttribute("data-title");
+                // let link = card.querySelector("a").href;
+                // let text = card.querySelector("h2").innerText;
+                return { link, text };
+            });
+        });
+        return Cards.filter((elem) => elem != null);
+    }
+    if (engine == "brave") {
+        await autoScroll(page);
+        await autoScroll(page);
+
+        const braveCards = await page.$$eval(
+            ".result-header .snippet-title",
+            (cards) => {
+                return cards.map((card) => {
+                    const text = card.innerText;
+                    let currNode = card.parentNode;
+                    while (currNode.tagName !== "A") {
+                        currNode = currNode.parentNode;
+                    }
+                    const link = currNode.href;
+                    return { link, text };
+                });
+            }
+        );
+        return braveCards.filter((elem) => elem != null);
+    }
+    if (engine == "tusk") {
+        await page.waitForSelector(".result-card");
+        await autoScroll(page);
+        await autoScroll(page);
+
+        const tuskCards = await page.$$eval(".result-card a.title", (cards) => {
+            return cards.map((card) => {
+                const text = card.innerText;
+                const link = card.href;
+                return { link, text };
+            });
+        });
+        return tuskCards.filter((elem) => elem != null);
+    }
+
+    if (engine == "duck") {
+        await autoScroll(page);
+        await autoScroll(page);
+        const duckCards = await page.$$eval(
+            ".result--news h2 a",
+            (cards) => {
+                return cards.map((card) => {
+                    const link = card.href;
+                    const text = card.innerText;
+                    return { link, text };
+                });
+            }
+        );
+
+        return duckCards.filter((elem) => elem != null);
+    }
+
+    return;
+};
 
 (async () => {
     // let term = searchTerms[searchIndex]
@@ -271,14 +358,16 @@ const extractLinks = async (engine, page) => {
     const allData = {
         maxLength: 0
     }
-    for (const [engineKey, engineValue] of Object.entries(searchEnginesGeneral)) {
+    for (const [engineKey, engineValue] of Object.entries(searchEnginesNews)) {
+    // for (const [engineKey, engineValue] of Object.entries(searchEnginesGeneral)) {
         try {
             const url = engineValue.replace("[[SEARCH_QUERY]]", normalizeString(term.query))
             console.log({ term, "engine": engineKey })
             await page.goto(url, {
                 waitUntil: "domcontentloaded",
             });
-            const data = await extractLinks(engineKey, page)
+            const data = await extractNewsLinks(engineKey, page)
+            // const data = await extractLinks(engineKey, page)
 
             // csvString += `Query:,${term}\n`
             // csvString += `Search Engine:,${keyToLabel(engineKey)}\n\n`
