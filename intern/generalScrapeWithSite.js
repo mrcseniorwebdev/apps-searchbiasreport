@@ -28,7 +28,8 @@ const s3 = new AWS.S3()
 const searchEnginesNews = {
     google: 'https://www.google.com/search?q=[[SEARCH_QUERY]]&tbm=nws',
     bing: 'https://www.bing.com/news/search?q=[[SEARCH_QUERY]]',
-    brave: 'https://search.brave.com/news?q=[[SEARCH_QUERY]]',
+    tusk: 'https://tusksearch.com/search?q=[[SEARCH_QUERY]]&p=1&l=center',
+    // brave: 'https://search.brave.com/news?q=[[SEARCH_QUERY]]',
     duck: 'https://duckduckgo.com/?q=[[SEARCH_QUERY]]&ia=news&iar=news'
 }
 const searchEnginesGeneral = {
