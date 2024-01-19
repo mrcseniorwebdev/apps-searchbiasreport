@@ -281,7 +281,7 @@ const extractNewsLinks = async (engine, page) => {
         await autoScroll(page);
         await autoScroll(page);
         const duckCards = await page.$$eval(
-            ".result--news h2 a",
+            ".result--news h2 .result__a",
             (cards) => {
                 return cards.map((card) => {
                     const link = card.href;
