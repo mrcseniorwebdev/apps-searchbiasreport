@@ -422,26 +422,48 @@ const extractNewsLinks = async (engine, page) => {
     csvString += `Position,Google,Bing,Duck Duck Go,Tusk\n`
 
     for (let i = 0; i < allData.maxLength; ++i) {
-        const googleData = allData['google'][i] ? `"=HYPERLINK(""${allData['google'][i].link}"",""${stripQuotes(allData['google'][i].text)}"")"` : " "
-        const bingData = allData['bing'][i] ? `"=HYPERLINK(""${allData['bing'][i].link}"",""${stripQuotes(allData['bing'][i].text)}"")"` : " "
-        const duckData = allData['duck'][i] ? `"=HYPERLINK(""${allData['duck'][i].link}"",""${stripQuotes(allData['duck'][i].text)}"")"` : " "
-        const tuskData = allData['tusk'][i] ? `"=HYPERLINK(""${allData['tusk'][i].link}"",""${stripQuotes(allData['tusk'][i].text)}"")"` : " "
-
-        if (allData['google'][i]?.link.includes(term.site) && campaignWebsiteSite['google'] == null) {
-            campaignWebsiteSite['google'] = i + 1
+        const googleData = allData['google'][i] ? `"=HYPERLINK(""${allData['google'][i].link}"",""${stripQuotes(allData['google'][i].text)}"")"` : " ";
+        const bingData = allData['bing'][i] ? `"=HYPERLINK(""${allData['bing'][i].link}"",""${stripQuotes(allData['bing'][i].text)}"")"` : " ";
+        const duckData = allData['duck'][i] ? `"=HYPERLINK(""${allData['duck'][i].link}"",""${stripQuotes(allData['duck'][i].text)}"")"` : " ";
+        const tuskData = allData['tusk'][i] ? `"=HYPERLINK(""${allData['tusk'][i].link}"",""${stripQuotes(allData['tusk'][i].text)}"")"` : " ";
+    
+        if (allData['google'][i]?.link && allData['google'][i].link.includes(term.site) && campaignWebsiteSite['google'] == null) {
+            campaignWebsiteSite['google'] = i + 1;
         }
-        if (allData['bing'][i]?.link.includes(term.site) && campaignWebsiteSite['bing'] == null) {
-            campaignWebsiteSite['bing'] = i + 1
+        if (allData['bing'][i]?.link && allData['bing'][i].link.includes(term.site) && campaignWebsiteSite['bing'] == null) {
+            campaignWebsiteSite['bing'] = i + 1;
         }
-        if (allData['duck'][i]?.link.includes(term.site) && campaignWebsiteSite['duck'] == null) {
-            campaignWebsiteSite['duck'] = i + 1
+        if (allData['duck'][i]?.link && allData['duck'][i].link.includes(term.site) && campaignWebsiteSite['duck'] == null) {
+            campaignWebsiteSite['duck'] = i + 1;
         }
-        if (allData['tusk'][i]?.link.includes(term.site) && campaignWebsiteSite['tusk'] == null) {
-            campaignWebsiteSite['tusk'] = i + 1
+        if (allData['tusk'][i]?.link && allData['tusk'][i].link.includes(term.site) && campaignWebsiteSite['tusk'] == null) {
+            campaignWebsiteSite['tusk'] = i + 1;
         }
-
-        csvString += `${i + 1},${googleData},${bingData},${duckData},${tuskData}\n`
+    
+        csvString += `${i + 1},${googleData},${bingData},${duckData},${tuskData}\n`;
     }
+    
+    // for (let i = 0; i < allData.maxLength; ++i) {
+    //     const googleData = allData['google'][i] ? `"=HYPERLINK(""${allData['google'][i].link}"",""${stripQuotes(allData['google'][i].text)}"")"` : " "
+    //     const bingData = allData['bing'][i] ? `"=HYPERLINK(""${allData['bing'][i].link}"",""${stripQuotes(allData['bing'][i].text)}"")"` : " "
+    //     const duckData = allData['duck'][i] ? `"=HYPERLINK(""${allData['duck'][i].link}"",""${stripQuotes(allData['duck'][i].text)}"")"` : " "
+    //     const tuskData = allData['tusk'][i] ? `"=HYPERLINK(""${allData['tusk'][i].link}"",""${stripQuotes(allData['tusk'][i].text)}"")"` : " "
+
+    //     if (allData['google'][i]?.link.includes(term.site) && campaignWebsiteSite['google'] == null) {
+    //         campaignWebsiteSite['google'] = i + 1
+    //     }
+    //     if (allData['bing'][i]?.link.includes(term.site) && campaignWebsiteSite['bing'] == null) {
+    //         campaignWebsiteSite['bing'] = i + 1
+    //     }
+    //     if (allData['duck'][i]?.link.includes(term.site) && campaignWebsiteSite['duck'] == null) {
+    //         campaignWebsiteSite['duck'] = i + 1
+    //     }
+    //     if (allData['tusk'][i]?.link.includes(term.site) && campaignWebsiteSite['tusk'] == null) {
+    //         campaignWebsiteSite['tusk'] = i + 1
+    //     }
+
+    //     csvString += `${i + 1},${googleData},${bingData},${duckData},${tuskData}\n`
+    // }
 
 
 
