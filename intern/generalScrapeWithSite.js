@@ -101,8 +101,18 @@ const normalizeString = term => {
         .replace(/[^a-zA-Z\d]/g, "+")
 }
 const stripQuotes = title => {
-    return title.replace(/\"/g, "'")
+    // Check if the title is a string
+    if (typeof title === 'string') {
+        return title.replace(/\"/g, "'");
+    } else {
+        // If title is not a string, throw an error or return a default value, e.g., an empty string
+        // throw new Error('The input title is not a string.');
+        return ''; // Return an empty string as a default, or choose another appropriate default value
+    }
 }
+// const stripQuotes = title => {
+//     return title.replace(/\"/g, "'")
+// }
 async function autoScroll(page) {
     await page.evaluate(async () => {
         await new Promise((resolve) => {
