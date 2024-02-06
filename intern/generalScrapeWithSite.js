@@ -369,16 +369,16 @@ const extractNewsLinks = async (engine, page) => {
     const allData = {
         maxLength: 0
     }
-    for (const [engineKey, engineValue] of Object.entries(searchEnginesNews)) {
-    // for (const [engineKey, engineValue] of Object.entries(searchEnginesGeneral)) {
+    // for (const [engineKey, engineValue] of Object.entries(searchEnginesNews)) {
+    for (const [engineKey, engineValue] of Object.entries(searchEnginesGeneral)) {
         try {
             const url = engineValue.replace("[[SEARCH_QUERY]]", normalizeString(term.query))
             console.log({ term, "engine": engineKey })
             await page.goto(url, {
                 waitUntil: "domcontentloaded",
             });
-            const data = await extractNewsLinks(engineKey, page)
-            // const data = await extractLinks(engineKey, page)
+            // const data = await extractNewsLinks(engineKey, page)
+            const data = await extractLinks(engineKey, page)
 
             // csvString += `Query:,${term}\n`
             // csvString += `Search Engine:,${keyToLabel(engineKey)}\n\n`
