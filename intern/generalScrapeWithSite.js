@@ -441,6 +441,7 @@ const extractNewsLinks = async (engine, page) => {
             }
         } catch (err) {
             console.error(err);
+            console.log(await page.content());
         }
     }
 
