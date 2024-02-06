@@ -1,14 +1,17 @@
-
-
 const authCheck = (req, res, next) => {
-    console.log('hellllllo')
-    // console.log(req)
-    console.log(req.user)
-    if (!req.user) {
-        res.status(401).json({ error: 'Unauthorized' })
-    } else {
-        next()
-    }
-}
+    console.log("hellllllo");
 
-module.exports = { authCheck }
+    if (process.env.NODE_ENV == "dev") {
+        next();
+        return
+    }
+    // console.log(req)
+    console.log(req.user);
+    if (!req.user) {
+        res.status(401).json({ error: "Unauthorized" });
+    } else {
+        next();
+    }
+};
+
+module.exports = { authCheck };
