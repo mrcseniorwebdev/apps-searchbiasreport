@@ -145,6 +145,8 @@ const extractLinks = async (engine, page) => {
         return gCards.filter((elem) => elem != null);
     }
     if (engine == "bing") {
+        await page.waitForSelector(".b_algoheader");
+
         await autoScroll(page);
         await autoScroll(page);
         await autoScroll(page);
@@ -229,6 +231,8 @@ const extractNewsLinks = async (engine, page) => {
         return gCards.filter((elem) => elem != null);
     }
     if (engine == "bing") {
+        await page.waitForSelector(".newscard");
+
         await autoScroll(page);
         await autoScroll(page);
         await autoScroll(page);
@@ -369,10 +373,11 @@ const extractNewsLinks = async (engine, page) => {
     const allData = {
         maxLength: 0,
     };
-    let searchtab = "";
 
+    let searchtab = "general";
     let searchEngines = searchEnginesGeneral;
     if (!!jobData.news) {
+        searchtab = "news";
         searchEngines = searchEnginesNews;
     }
 
@@ -384,7 +389,7 @@ const extractNewsLinks = async (engine, page) => {
                 "[[SEARCH_QUERY]]",
                 normalizeString(term.query)
             );
-            console.log({ term, engine: engineKey });
+            console.log({ term, engine: engineKey, searchtab });
             await page.goto(url, {
                 waitUntil: "domcontentloaded",
             });
