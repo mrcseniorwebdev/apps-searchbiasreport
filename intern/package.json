@@ -5,8 +5,8 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "gen": "node generalScrape.js",
-    "site": "node generalScrapeWithSite.js",
+    "site": "node main.js",
+    "dev": "node main.js --dev",
     "lazy": "node lazy.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
