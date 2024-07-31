@@ -10,26 +10,26 @@ const args = process.argv.slice(2);
 // Check if the '--dev' flag exists in the arguments
 const DEV_MODE = args.includes("--dev");
 
-const pool = DEV_MODE
-  ? mariadb.createPool({
-      host: "localhost",
-      port: 33306,
-      user: "user",
-      password: "pass",
-      database: "searchbiasreport",
-    })
-  : mariadb.createPool({
-      host: "db",
-      user: process.env.MARIA_DB_USER,
-      password: process.env.MARIA_DB_PASS,
-      database: "searchbiasreport",
-    });
-// const pool = mariadb.createPool({
-//   host: "db",
-//   user: process.env.MARIA_DB_USER,
-//   password: process.env.MARIA_DB_PASS,
-//   database: "searchbiasreport",
-// });
+//const pool = DEV_MODE
+//  ? mariadb.createPool({
+//      host: "localhost",
+//      port: 33306,
+//      user: "user",
+//      password: "pass",
+//      database: "searchbiasreport",
+//    })
+//  : mariadb.createPool({
+//      host: "db",
+//      user: process.env.MARIA_DB_USER,
+//      password: process.env.MARIA_DB_PASS,
+//      database: "searchbiasreport",
+//    });
+ const pool = mariadb.createPool({
+   host: "db",
+   user: process.env.MARIA_DB_USER,
+   password: process.env.MARIA_DB_PASS,
+   database: "searchbiasreport",
+ });
 
 const getConnection = () => {
   return new Promise(function (resolve, reject) {
