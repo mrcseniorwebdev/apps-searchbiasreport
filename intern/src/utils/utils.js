@@ -158,11 +158,11 @@ const autoScroll = async (page) => {
         const scrollHeight = document.body.scrollHeight;
 
         // Log scroll details for debugging
-        console.log("scrolling...", {
-          totalHeight,
-          scrollHeight,
-          "window.innerHeight": window.innerHeight,
-        });
+        // console.log("scrolling...", {
+        //   totalHeight,
+        //   scrollHeight,
+        //   "window.innerHeight": window.innerHeight,
+        // });
 
         // If the total height scrolled is greater than or equal to the scroll height minus the window height, stop scrolling
         if (totalHeight >= scrollHeight - window.innerHeight) {
