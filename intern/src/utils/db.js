@@ -24,19 +24,19 @@ const DEV_MODE = args.includes("--dev");
 //      password: process.env.MARIA_DB_PASS,
 //      database: "searchbiasreport",
 //    });
-//  const pool = mariadb.createPool({
-//    host: "db",
-//    user: process.env.MARIA_DB_USER,
-//    password: process.env.MARIA_DB_PASS,
-//    database: "searchbiasreport",
-//  });
-const pool = mariadb.createPool({
-  host: "localhost",
-  port: 33306,
-  user: "user",
-  password: "pass",
-  database: "searchbiasreport",
-});
+ const pool = mariadb.createPool({
+   host: "db",
+   user: process.env.MARIA_DB_USER,
+   password: process.env.MARIA_DB_PASS,
+   database: "searchbiasreport",
+ });
+// const pool = mariadb.createPool({
+//   host: "localhost",
+//   port: 33306,
+//   user: "user",
+//   password: "pass",
+//   database: "searchbiasreport",
+// });
 
 const getConnection = () => {
   return new Promise(function (resolve, reject) {
