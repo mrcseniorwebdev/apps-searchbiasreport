@@ -152,6 +152,7 @@ console.log(`DEV_MODE is set to: ${DEV_MODE}`);
       console.error(err);
       console.log(await page.content());
     }
+    // break
   }
 
   // Close the browser after extraction

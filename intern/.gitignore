@@ -7,3 +7,4 @@ server.key
 build
 /exports/*
 secrets
+searchBiasReport.csv

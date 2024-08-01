@@ -256,33 +256,85 @@ const googleMoreResultsBtn = async (page) => {
 };
 
 /**
- * Clicks the "More results" button on Tusk search page after auto-scrolling and handling possible exceptions.
+ * Clicks the next page button in the pagination ul after the currently selected li element.
  *
  * @param {Object} page - Puppeteer page object.
  * @returns {Promise<void>}
  */
 const tuskMoreResultsBtn = async (page) => {
-  console.log("one more autoscroll");
-  await page.waitForSelector(".search-results-infinite-scroll");
-  await autoScrollDiv(page, ".search-results-infinite-scroll");
+  console.log("Waiting for the pagination elements");
+
+  // Ensure the pagination exists and is visible
+  await page.waitForSelector("tusk-navigation-pager", {
+    visible: true,
+  });
 
   try {
-    console.log("wait for selector");
-    await page.waitForSelector("button.btn-more-results", {
-      visible: true,
-    });
-  } catch (e) {
-    console.log("scroll again");
-    await autoScrollDiv(page, ".search-results-infinite-scroll");
-    console.log("wait for selector part deux");
-    await page.waitForSelector("button.btn-more-results", {
-      visible: true,
-    });
-  }
+    // Find the currently selected page number
+    const selectedElement = await page.$(
+      "tusk-navigation-pager li span.selected"
+    );
 
-  console.log("click");
-  await page.click("button.btn-more-results");
+    if (selectedElement) {
+      // Get the parent li of the selected span
+      const parentLi = await selectedElement.evaluateHandle(
+        (node) => node.parentElement
+      );
+
+      // Get the next sibling li of the currently selected li
+      const nextLi = await parentLi.evaluateHandle(
+        (node) => node.nextElementSibling
+      );
+
+      if (nextLi) {
+        // Click on the span inside the next li element
+        const nextSpan = await nextLi.$("span");
+        if (nextSpan) {
+          console.log("Clicking the next page number");
+          await nextSpan.click();
+        } else {
+          console.log("Next span not found");
+        }
+      } else {
+        console.log("No next sibling found");
+      }
+    } else {
+      console.log("Selected element not found");
+    }
+  } catch (error) {
+    console.error("Error clicking the next page:", error);
+  }
 };
+
+// /**
+//  * Clicks the "More results" button on Tusk search page after auto-scrolling and handling possible exceptions.
+//  *
+//  * @param {Object} page - Puppeteer page object.
+//  * @returns {Promise<void>}
+//  */
+// const tuskMoreResultsBtn = async (page) => {
+//   console.log("one more autoscroll");
+//   // await page.waitForSelector(".search-results-infinite-scroll");
+//   // await autoScrollDiv(page, ".search-results-infinite-scroll");
+//   await autoScroll(page);
+
+//   try {
+//     console.log("wait for selector");
+//     await page.waitForSelector("button.btn-more-results", {
+//       visible: true,
+//     });
+//   } catch (e) {
+//     console.log("scroll again");
+//     await autoScrollDiv(page, ".search-results-infinite-scroll");
+//     console.log("wait for selector part deux");
+//     await page.waitForSelector("button.btn-more-results", {
+//       visible: true,
+//     });
+//   }
+
+//   console.log("click");
+//   await page.click("button.btn-more-results");
+// };
 
 /**
  * Clicks the "Next page" link on Bing search page after auto-scrolling.
@@ -453,16 +505,20 @@ const extractLinks = async (engine, page, screenshotFilePath, fileName) => {
   if (engine === "tusk") {
     await page.waitForSelector(".result-card");
     let unchangedIterations = 0;
+    let pageNumber = 1;
 
     while (allCards.length < min_threshold && unchangedIterations < 3) {
       const previousLength = allCards.length;
 
       console.log(`${allCards.length} / ${min_threshold} items`);
 
-      await tuskMoreResultsBtn(page);
-      await page.waitForTimeout(2000); // Small wait after clicking more results
+      await autoScroll(page);
+      await autoScroll(page);
+      // await autoScroll(page);
+      // await tuskMoreResultsBtn(page);
+      // await page.waitForTimeout(2000); // Small wait after clicking more results
 
-      allCards = await page.$$eval(".result-card a.title", (cards) => {
+      const Cards = await page.$$eval(".result-card a.title", (cards) => {
         return cards
           .map((card) => {
             const text = card.innerText;
@@ -472,21 +528,20 @@ const extractLinks = async (engine, page, screenshotFilePath, fileName) => {
           .filter((elem) => elem != null);
       });
 
+      allCards.push(...Cards);
+      console.log("screenshot...");
+      await pageScreenshot(page, screenshotFilePath, fileName, pageNumber);
+
       if (allCards.length === previousLength) {
         unchangedIterations++;
       } else {
         unchangedIterations = 0;
       }
-    }
 
-    console.log("screenshot...");
-    await pageScreenshot(
-      page,
-      screenshotFilePath,
-      fileName,
-      null,
-      ".search-results-infinite-scroll"
-    );
+      await page.waitForTimeout(2000); // Small wait after clicking more results
+      await tuskMoreResultsBtn(page);
+      ++pageNumber;
+    }
 
     return allCards;
   }
