@@ -40,6 +40,12 @@ const args = process.argv.slice(2);
 // Check if the '--dev' flag exists in the arguments
 const DEV_MODE = args.includes("--dev");
 
+//use when you dont want the browser to close and if you only want the first engine url
+const SINGLE_MODE = args.includes("--single");
+
+//use when you want to debug and not upload the files to s3
+// const --noaws = args.includes("--noaws");
+
 // Output the value of DEV_MODE for verification
 console.log(`DEV_MODE is set to: ${DEV_MODE}`);
 
@@ -137,7 +143,7 @@ console.log(`DEV_MODE is set to: ${DEV_MODE}`);
         completed = 0;
       }
 
-      console.log({ data, length: data.length });
+      // console.log({ data, length: data.length });
 
       if (!data.length) {
         console.log("Data extraction failed");
@@ -152,11 +158,14 @@ console.log(`DEV_MODE is set to: ${DEV_MODE}`);
       console.error(err);
       console.log(await page.content());
     }
+    if (SINGLE_MODE) break;
     // break
   }
 
-  // Close the browser after extraction
-  await browser.close();
+  if (SINGLE_MODE) {
+    // Close the browser after extraction
+    await browser.close();
+  }
 
   // Summarize search data and generate CSV content
   const campaignWebsiteSite = {
@@ -310,6 +319,8 @@ console.log(`DEV_MODE is set to: ${DEV_MODE}`);
       console.log("Ending database connection...");
       await conn.end();
     }
-    process.exit();
+    if (!SINGLE_MODE) {
+      process.exit();
+    }
   }
 })();

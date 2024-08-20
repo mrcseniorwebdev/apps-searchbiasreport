@@ -395,35 +395,50 @@ const extractLinks = async (engine, page, screenshotFilePath, fileName) => {
 
     // for (let i = 0; i < extraPages; ++i) {
     // }
-    let unchangedIterations = 0;
 
-    while (allCards.length < min_threshold && unchangedIterations < 3) {
-      const previousLength = allCards.length;
+    allCards = await page.$$eval("div[data-snc]", (cards) => {
+      return cards
+        .map((card) => {
+          const heading = card.querySelector('div[role="heading"]');
+          const link = card.querySelector("a")?.href;
+          if (heading && link) {
+            const text = heading.textContent;
+            return { link, text };
+          }
+          return null;
+        })
+        .filter((elem) => elem != null);
+    });
 
-      console.log(`${allCards.length} / ${min_threshold} items`);
-      await googleMoreResultsBtn(page);
-      await page.waitForTimeout(2000); // Small wait after clicking more results
+    // let unchangedIterations = 0;
 
-      allCards = await page.$$eval("div[data-snc]", (cards) => {
-        return cards
-          .map((card) => {
-            const heading = card.querySelector('div[role="heading"]');
-            const link = card.querySelector("a")?.href;
-            if (heading && link) {
-              const text = heading.textContent;
-              return { link, text };
-            }
-            return null;
-          })
-          .filter((elem) => elem != null);
-      });
+    // while (allCards.length < min_threshold && unchangedIterations < 3) {
+    //   const previousLength = allCards.length;
 
-      if (allCards.length === previousLength) {
-        unchangedIterations++;
-      } else {
-        unchangedIterations = 0;
-      }
-    }
+    //   console.log(`${allCards.length} / ${min_threshold} items`);
+    //   await googleMoreResultsBtn(page);
+    //   await page.waitForTimeout(2000); // Small wait after clicking more results
+
+    //   allCards = await page.$$eval("div[data-snc]", (cards) => {
+    //     return cards
+    //       .map((card) => {
+    //         const heading = card.querySelector('div[role="heading"]');
+    //         const link = card.querySelector("a")?.href;
+    //         if (heading && link) {
+    //           const text = heading.textContent;
+    //           return { link, text };
+    //         }
+    //         return null;
+    //       })
+    //       .filter((elem) => elem != null);
+    //   });
+
+    //   if (allCards.length === previousLength) {
+    //     unchangedIterations++;
+    //   } else {
+    //     unchangedIterations = 0;
+    //   }
+    // }
     console.log("screenshot...");
     await pageScreenshot(page, screenshotFilePath, fileName, null);
 
@@ -437,37 +452,55 @@ const extractLinks = async (engine, page, screenshotFilePath, fileName) => {
     let pageNumber = 1;
     let unchangedIterations = 0;
 
-    while (allCards.length < min_threshold && unchangedIterations < 3) {
-      const previousLength = allCards.length;
+    await autoScroll(page);
+    await autoScroll(page);
+    await autoScroll(page);
 
-      console.log(`${allCards.length} / ${min_threshold} items`);
-      await autoScroll(page);
-      await autoScroll(page);
-      await autoScroll(page);
+    const Cards = await page.$$eval(".b_algoheader", (cards) => {
+      return cards
+        .map((card) => {
+          const link = card.querySelector("a").href;
+          const text = card.querySelector("h2").innerText;
+          return { link, text };
+        })
+        .filter((elem) => elem != null);
+    });
 
-      const Cards = await page.$$eval(".b_algoheader", (cards) => {
-        return cards
-          .map((card) => {
-            const link = card.querySelector("a").href;
-            const text = card.querySelector("h2").innerText;
-            return { link, text };
-          })
-          .filter((elem) => elem != null);
-      });
+    allCards.push(...Cards);
+    console.log("screenshot...");
+    await pageScreenshot(page, screenshotFilePath, fileName, pageNumber);
 
-      allCards.push(...Cards);
-      console.log("screenshot...");
-      await pageScreenshot(page, screenshotFilePath, fileName, pageNumber);
+    // while (allCards.length < min_threshold && unchangedIterations < 3) {
+    //   const previousLength = allCards.length;
 
-      if (allCards.length === previousLength) {
-        unchangedIterations++;
-      } else {
-        unchangedIterations = 0;
-      }
+    //   console.log(`${allCards.length} / ${min_threshold} items`);
+    //   await autoScroll(page);
+    //   await autoScroll(page);
+    //   await autoScroll(page);
 
-      await bingMoreResultsBtn(page);
-      ++pageNumber;
-    }
+    //   const Cards = await page.$$eval(".b_algoheader", (cards) => {
+    //     return cards
+    //       .map((card) => {
+    //         const link = card.querySelector("a").href;
+    //         const text = card.querySelector("h2").innerText;
+    //         return { link, text };
+    //       })
+    //       .filter((elem) => elem != null);
+    //   });
+
+    //   allCards.push(...Cards);
+    //   console.log("screenshot...");
+    //   await pageScreenshot(page, screenshotFilePath, fileName, pageNumber);
+
+    //   if (allCards.length === previousLength) {
+    //     unchangedIterations++;
+    //   } else {
+    //     unchangedIterations = 0;
+    //   }
+
+    //   await bingMoreResultsBtn(page);
+    //   ++pageNumber;
+    // }
 
     return allCards;
   }
@@ -507,72 +540,101 @@ const extractLinks = async (engine, page, screenshotFilePath, fileName) => {
     let unchangedIterations = 0;
     let pageNumber = 1;
 
-    while (allCards.length < min_threshold && unchangedIterations < 3) {
-      const previousLength = allCards.length;
+    await autoScroll(page);
+    await autoScroll(page);
+    // await autoScroll(page);
+    // await tuskMoreResultsBtn(page);
+    // await page.waitForTimeout(2000); // Small wait after clicking more results
 
-      console.log(`${allCards.length} / ${min_threshold} items`);
+    const Cards = await page.$$eval(".result-card a.title", (cards) => {
+      return cards
+        .map((card) => {
+          const text = card.innerText;
+          const link = card.href;
+          return { link, text };
+        })
+        .filter((elem) => elem != null);
+    });
 
-      await autoScroll(page);
-      await autoScroll(page);
-      // await autoScroll(page);
-      // await tuskMoreResultsBtn(page);
-      // await page.waitForTimeout(2000); // Small wait after clicking more results
+    allCards.push(...Cards);
+    console.log("screenshot...");
+    await pageScreenshot(page, screenshotFilePath, fileName, pageNumber);
 
-      const Cards = await page.$$eval(".result-card a.title", (cards) => {
-        return cards
-          .map((card) => {
-            const text = card.innerText;
-            const link = card.href;
-            return { link, text };
-          })
-          .filter((elem) => elem != null);
-      });
+    // while (allCards.length < min_threshold && unchangedIterations < 3) {
+    //   const previousLength = allCards.length;
 
-      allCards.push(...Cards);
-      console.log("screenshot...");
-      await pageScreenshot(page, screenshotFilePath, fileName, pageNumber);
+    //   console.log(`${allCards.length} / ${min_threshold} items`);
 
-      if (allCards.length === previousLength) {
-        unchangedIterations++;
-      } else {
-        unchangedIterations = 0;
-      }
+    //   await autoScroll(page);
+    //   await autoScroll(page);
+    //   // await autoScroll(page);
+    //   // await tuskMoreResultsBtn(page);
+    //   // await page.waitForTimeout(2000); // Small wait after clicking more results
 
-      await page.waitForTimeout(2000); // Small wait after clicking more results
-      await tuskMoreResultsBtn(page);
-      ++pageNumber;
-    }
+    //   const Cards = await page.$$eval(".result-card a.title", (cards) => {
+    //     return cards
+    //       .map((card) => {
+    //         const text = card.innerText;
+    //         const link = card.href;
+    //         return { link, text };
+    //       })
+    //       .filter((elem) => elem != null);
+    //   });
+
+    //   allCards.push(...Cards);
+    //   console.log("screenshot...");
+    //   await pageScreenshot(page, screenshotFilePath, fileName, pageNumber);
+
+    //   if (allCards.length === previousLength) {
+    //     unchangedIterations++;
+    //   } else {
+    //     unchangedIterations = 0;
+    //   }
+
+    //   await page.waitForTimeout(2000); // Small wait after clicking more results
+    //   await tuskMoreResultsBtn(page);
+    //   ++pageNumber;
+    // }
 
     return allCards;
   }
 
   if (engine === "duck") {
     await autoScroll(page);
+    await autoScroll(page);
     let unchangedIterations = 0;
+    allCards = await page.$$eval(".react-results--main h2 a", (cards) => {
+      return cards
+        .map((card) => {
+          const link = card.href;
+          const text = card.innerText;
+          return { link, text };
+        })
+        .filter((elem) => elem != null);
+    });
+    // while (allCards.length < min_threshold && unchangedIterations < 3) {
+    //   const previousLength = allCards.length;
 
-    while (allCards.length < min_threshold && unchangedIterations < 3) {
-      const previousLength = allCards.length;
+    //   console.log(`${allCards.length} / ${min_threshold} items`);
+    //   await duckMoreResultsBtn(page);
+    //   await page.waitForTimeout(2000); // Small wait after clicking more results
 
-      console.log(`${allCards.length} / ${min_threshold} items`);
-      await duckMoreResultsBtn(page);
-      await page.waitForTimeout(2000); // Small wait after clicking more results
+    //   allCards = await page.$$eval(".react-results--main h2 a", (cards) => {
+    //     return cards
+    //       .map((card) => {
+    //         const link = card.href;
+    //         const text = card.innerText;
+    //         return { link, text };
+    //       })
+    //       .filter((elem) => elem != null);
+    //   });
 
-      allCards = await page.$$eval(".react-results--main h2 a", (cards) => {
-        return cards
-          .map((card) => {
-            const link = card.href;
-            const text = card.innerText;
-            return { link, text };
-          })
-          .filter((elem) => elem != null);
-      });
-
-      if (allCards.length === previousLength) {
-        unchangedIterations++;
-      } else {
-        unchangedIterations = 0;
-      }
-    }
+    //   if (allCards.length === previousLength) {
+    //     unchangedIterations++;
+    //   } else {
+    //     unchangedIterations = 0;
+    //   }
+    // }
 
     console.log("screenshot...");
     await pageScreenshot(page, screenshotFilePath, fileName, null);
