@@ -1,4 +1,6 @@
 const puppeteer = require("puppeteer");
+const { HttpsProxyAgent } = require("https-proxy-agent");
+
 const fs = require("fs");
 const pool = require("./src/utils/db");
 const path = require("path");
@@ -34,6 +36,11 @@ AWS.config.update({
 });
 const s3 = new AWS.S3();
 
+//proxy password stuff
+const username = "spkjmz7mme";
+const password = "O89Z_ywvFfqs8glj4O";
+const proxyServer = "state.smartproxy.com:21106";
+
 // Get the command-line arguments excluding the first two (node and script path)
 const args = process.argv.slice(2);
 
@@ -48,6 +55,38 @@ const SINGLE_MODE = args.includes("--single");
 
 // Output the value of DEV_MODE for verification
 console.log(`DEV_MODE is set to: ${DEV_MODE}`);
+
+(async () => {
+
+  // Initialize puppeteerConfig with either development or production settings
+  const puppeteerConfig = {
+    headless: !DEV_MODE,
+    slowMo: 100,
+    args: [
+      "--no-sandbox",
+      `--proxy-server=${proxyServer}`,
+      ...(!DEV_MODE
+        ? ["--disable-gpu", "--single-process", "--no-zygote"]
+        : []),
+    ],
+  };
+  // Launch a headless browser with Puppeteer
+  const browser = await puppeteer.launch(puppeteerConfig);
+
+  // Open a new browser page and set the user-agent
+  const page = await browser.newPage();
+
+  await page.authenticate({ username, password });
+
+  await page.setUserAgent(
+    "Mozilla/5.0 (Linux; Android 12; Pixel 4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.0.0 Mobile Safari/537.36"
+  );
+
+  await page.goto(
+    "https://www.google.com/search?q=whats+my+ip&oq=whats+my+ip",
+    { waitUntil: "networkidle2" }
+  );
+})();
 
 (async () => {
   let completed = 1;
@@ -75,6 +114,7 @@ console.log(`DEV_MODE is set to: ${DEV_MODE}`);
     slowMo: 100,
     args: [
       "--no-sandbox",
+      `--proxy-server=${proxyServer}`,
       ...(!DEV_MODE
         ? ["--disable-gpu", "--single-process", "--no-zygote"]
         : []),
@@ -85,6 +125,9 @@ console.log(`DEV_MODE is set to: ${DEV_MODE}`);
 
   // Open a new browser page and set the user-agent
   const page = await browser.newPage();
+
+  await page.authenticate({ username, password });
+
   await page.setUserAgent(
     "Mozilla/5.0 (Linux; Android 12; Pixel 4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.0.0 Mobile Safari/537.36"
   );
@@ -110,6 +153,7 @@ console.log(`DEV_MODE is set to: ${DEV_MODE}`);
         "[[SEARCH_QUERY]]",
         normalizeString(term.query)
       );
+      // const url = 'https://www.where-am-i.co/my-ip-location'
       console.log({ term, engine: engineKey, searchtab });
 
       // Navigate to the search engine URL
@@ -147,7 +191,7 @@ console.log(`DEV_MODE is set to: ${DEV_MODE}`);
 
       if (!data.length) {
         console.log("Data extraction failed");
-        completed = 0;
+        // completed = 0;
         console.log(await page.content());
       }
 
