@@ -206,10 +206,10 @@ console.log(`DEV_MODE is set to: ${DEV_MODE}`);
     // break
   }
 
-  if (SINGLE_MODE) {
+  // if (SINGLE_MODE) {
     // Close the browser after extraction
     await browser.close();
-  }
+  // }
 
   // Summarize search data and generate CSV content
   const campaignWebsiteSite = {
@@ -363,8 +363,8 @@ console.log(`DEV_MODE is set to: ${DEV_MODE}`);
       console.log("Ending database connection...");
       await conn.end();
     }
-    if (!SINGLE_MODE) {
+    // if (!SINGLE_MODE) {
       process.exit();
-    }
+    // }
   }
 })();
